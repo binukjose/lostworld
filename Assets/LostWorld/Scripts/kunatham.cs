@@ -50,7 +50,7 @@ public class kunatham : MonoBehaviour {
 
 			if (this.transform.parent &&  this.transform.parent.tag.ToString().StartsWith("SharkCube")){
 				transform.Translate (Vector3.forward*0.2f);// IMP:move the arrow a bit more into the shark.
-				Debug.Log (" Kuntham SharkCube HIT "  );
+				Debug.Log (" Collision Kuntham SharkCube HIT "  );
 				hit_shark_surface = true;
 			}
 			else if (kuntham_throwing && move_count > 0  ) {

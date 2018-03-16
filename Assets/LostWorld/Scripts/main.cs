@@ -4,47 +4,54 @@ using UnityEngine;
 
 public class main : MonoBehaviour {
 
-	public GameObject SharkGameObj;
-	 
+	//public variables
+	public GameObject SharkGameObj; 
 	public Camera ArcoreCamera;
-	public GameObject water;
 	public GameObject gun;
+	public GameObject kuntham;
+	public GameObject water;
 	public int shark_swim_radius_x ;
 	public int shark_swim_radius_z ;
 	public int NUM_SHARKS  ;
+
+	//private 
 	private List <GameObject> m_Sharks =new List<GameObject>();
-
-  
-
-	public GameObject kuntham;
+	private int mSharkCount;
 	private bool fire = false;
+	private float waterSurfaceHeight;
+	void AddAShark()
+	{ 
+		Random.InitState(System.DateTime.Now.Millisecond);
+		Vector3 spos= new Vector3(Random.Range
+			(ArcoreCamera.transform.position.x - shark_swim_radius_x , 
+				ArcoreCamera.transform.position.x + shark_swim_radius_x), 
+			waterSurfaceHeight  ,   
+			Random.Range(
+				ArcoreCamera.transform.position.z - shark_swim_radius_z, 
+				ArcoreCamera.transform.position.z + shark_swim_radius_z));
+		try {
 
+			m_Sharks.Add(Instantiate (SharkGameObj ,spos,Quaternion.identity));
+		}
+		catch (System.Exception ex) {
+			Debug.Log (" Target exception " + ex.ToString());
+		} 
+	}
 
 	void Start () {
 
-		/*Create the fishes */
-		float waterSurfaceHeight = water.transform.position.y -1;  	 
-		Random.InitState(System.DateTime.Now.Millisecond);
-		for (int i=0;i<NUM_SHARKS;i++) {
-			Vector3 spos= new Vector3(Random.Range
-				(ArcoreCamera.transform.position.x - shark_swim_radius_x , 
-					ArcoreCamera.transform.position.x + shark_swim_radius_x), 
-				 waterSurfaceHeight  ,   
-				Random.Range(
-					ArcoreCamera.transform.position.z - shark_swim_radius_z, 
-					ArcoreCamera.transform.position.z + shark_swim_radius_z));
-			try {
-				 
-				m_Sharks.Add(Instantiate (SharkGameObj ,spos,Quaternion.identity));
-			}
-			catch (System.Exception ex) {
-				Debug.Log (" Target exception " + ex.ToString());
-			} 
-		}
+		/*Create one fishe */
+		 waterSurfaceHeight = water.transform.position.y -1; 
+		AddAShark ();
+
 	}
 	
 	/* Need to trigger a spear shot if button is pressed */
 	void Update () {
+
+		if (mSharkCount < NUM_SHARKS) {
+			AddAShark ();
+		}
 		/*Set the gun position */
 		Vector3 startpos = ArcoreCamera.transform.position;
 		startpos.y--;
