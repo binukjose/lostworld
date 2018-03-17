@@ -5,40 +5,47 @@ using UnityEngine;
 public class sharkMove : MonoBehaviour {
 	 
 	//public 
-
 	public GameObject ArcoreCamera;
 	public GameObject waterBody;
-	//public GameObject target = null;
+	public GameObject target ;
 	public Vector3 mSharkTarget;
 	public int shark_swim_radius_x ;
 	public int shark_swim_radius_z ;
 	public GameObject Hit_wound;
-
+	public  float MobCurrentSpeed = 2f;
+	public  float angularVelocity = .01f;
 
 	//private
-	private float waterSurfaceHeight;
-	private float MobCurrentSpeed = 1f;
+	private float waterSurfaceHeight;   
+
 	private float distance;
 	private int my_wound_count = 0;
 
+	private int test_move_count = 0;
 	enum SharkState {Idle=1,Move,Attack,JumpStart,Jump,JumpSplash,Dead};  
 	SharkState mSharkState = SharkState.Move;
  
+	float getSharkTargetX(){
+		return Random.Range
+		(ArcoreCamera.transform.position.x - shark_swim_radius_x, 
+			ArcoreCamera.transform.position.x + shark_swim_radius_x);
+	}
+
+	float getSharkTargetZ(){
+		return Random.Range (
+			ArcoreCamera.transform.position.z - shark_swim_radius_z, 
+			ArcoreCamera.transform.position.z + shark_swim_radius_z);
+	}
+
 	Vector3 getSharkTarget(){
 		Vector3 spos;
 		Random.InitState(System.DateTime.Now.Millisecond);
-		spos= new Vector3(Random.Range
-							(ArcoreCamera.transform.position.x - shark_swim_radius_x , 
-				         	ArcoreCamera.transform.position.x + shark_swim_radius_x), 
-							waterSurfaceHeight  ,  
-				         	Random.Range(
-				         	ArcoreCamera.transform.position.z - shark_swim_radius_z, 
-							ArcoreCamera.transform.position.z + shark_swim_radius_z));
-
-		//BINU if (spos.y > waterSurfaceHeight) spos.y = waterSurfaceHeight;
-		//m_target.transform.SetPositionAndRotation (spos, Quaternion.identity);
+     	spos = new Vector3 (getSharkTargetX(), 
+			waterSurfaceHeight,  
+			getSharkTargetZ());
 		return spos;
 	}
+
 	void Start () {
 		waterSurfaceHeight = waterBody.transform.position.y -1;  
 		mSharkTarget = getSharkTarget ();
@@ -47,24 +54,22 @@ public class sharkMove : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		//if (m_target == null) {
-		//	m_target = Instantiate (target);
-		//	Debug.Log ("target instantiated in update");
-		//}
-		if (Input.touchCount > 1)
-		{
-			//angular_drag = angular_drag + 0.3f;
-		}
-	
+
+		Debug.Log ("Move : mSharkState " +  mSharkState + " test_move_count" + test_move_count);
+		test_move_count++;
 		if (mSharkState == SharkState.Move) {
 			distance = Vector3.Distance (mSharkTarget, transform.position);
-			// If we are arriving at target, pick a new target for our shark and reset the last attack if there was one
-			if (distance <= 2f || distance > Mathf.Abs (shark_swim_radius_z)) {
-				mSharkTarget = getSharkTarget ();
+			if (distance <= 2f ) {
+				mSharkTarget = getSharkTarget();
 			}	
+			else if (shark_swim_radius_z - Mathf.Abs (transform.position.z) < 0){
+				mSharkTarget.z = getSharkTargetZ ();
+			}
+			else if (shark_swim_radius_x - Mathf.Abs (transform.position.x) < 0){
+				mSharkTarget.x = getSharkTargetX ();
+			}
 			Vector3 relativePos = mSharkTarget - transform.position;
-			transform.rotation = Quaternion.Slerp (transform.rotation, Quaternion.LookRotation (relativePos), Time.deltaTime * 2);
-			// shark translate in forward direction.
+			transform.rotation = Quaternion.Slerp (transform.rotation, Quaternion.LookRotation (relativePos), Time.deltaTime * angularVelocity);
 			transform.Translate (Vector3.forward * Time.deltaTime * MobCurrentSpeed);
 		} else if (mSharkState == SharkState.Attack) {
 			mSharkTarget = new Vector3 (ArcoreCamera.transform.position.x,
@@ -72,27 +77,36 @@ public class sharkMove : MonoBehaviour {
 				ArcoreCamera.transform.position.z);
 			Vector3 relativePos = mSharkTarget - transform.position;
 			distance = Vector3.Distance (mSharkTarget, transform.position);
-			transform.rotation = Quaternion.Slerp (transform.rotation, Quaternion.LookRotation (relativePos), Time.deltaTime * 2);
+			transform.rotation = Quaternion.Slerp (transform.rotation, Quaternion.LookRotation (relativePos), Time.deltaTime * angularVelocity);
 			// shark translate in forward direction.
 			transform.Translate (Vector3.forward * Time.deltaTime * MobCurrentSpeed * 5);
 
-			if (distance <= 2f) {
+			if (distance <= 3f) {
 				mSharkState = SharkState.Jump;
 			}
 		} else if (mSharkState == SharkState.JumpStart) {
 			mSharkTarget = new Vector3 (ArcoreCamera.transform.position.x,
-				ArcoreCamera.transform.position.y,
+				ArcoreCamera.transform.position.y + 1f,
 				ArcoreCamera.transform.position.z);
 			distance = Vector3.Distance (mSharkTarget, transform.position);
-			transform.Translate (Vector3.forward * Time.deltaTime * MobCurrentSpeed *(distance/2));
-
+			transform.Translate (Vector3.forward * Time.deltaTime * MobCurrentSpeed * (distance / 2));
+			if (distance <= .3f) {
+				mSharkState = SharkState.Dead;
+			}
+		} else if (mSharkState == SharkState.Dead) {
+			mSharkTarget = new Vector3 (ArcoreCamera.transform.position.x,
+				waterSurfaceHeight-3f,
+				ArcoreCamera.transform.position.z);
+			distance = Vector3.Distance (mSharkTarget, transform.position);
+			transform.Translate (Vector3.forward * Time.deltaTime * MobCurrentSpeed * (distance / 2));
+			mSharkState = SharkState.Move;
 		}
 	}
 
 
 	void OnCollisionEnter (Collision col)
 	{
-		Debug.Log ("  CollisionEnter Parent Tag   "  + col.transform.transform.tag);
+		Debug.Log (" CollisionEnter Parent Tag   "  + col.transform.transform.tag);
 		try {
 			//Destroy(col.gameObject);
 			if(col.gameObject.tag == "dynamic")

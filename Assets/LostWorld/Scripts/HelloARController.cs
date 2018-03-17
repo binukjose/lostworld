@@ -100,8 +100,8 @@ namespace GoogleARCore.HelloAR
             Screen.sleepTimeout = SleepTimeout.NeverSleep;
 
 			//BINU NO plane drawing 
-			//SearchingForPlaneUI.SetActive(false);
-			//return;
+			SearchingForPlaneUI.SetActive(false);
+			return;
 
 			//BINU CHECK THIS : TODO
 

@@ -19,6 +19,7 @@ public class main : MonoBehaviour {
 	private int mSharkCount;
 	private bool fire = false;
 	private float waterSurfaceHeight;
+
 	void AddAShark()
 	{ 
 		Random.InitState(System.DateTime.Now.Millisecond);
@@ -39,42 +40,50 @@ public class main : MonoBehaviour {
 	}
 
 	void Start () {
-
-		/*Create one fishe */
-		 waterSurfaceHeight = water.transform.position.y -1; 
-		AddAShark ();
+		//Set the height of water surface
+		 waterSurfaceHeight = water.transform.position.y -1;
 
 	}
 	
 	/* Need to trigger a spear shot if button is pressed */
 	void Update () {
-
+		Debug.Log ("NUM_SHARKS" +NUM_SHARKS + "shark list count  " + m_Sharks.Count + "Shar count" + mSharkCount);
 		if (mSharkCount < NUM_SHARKS) {
 			AddAShark ();
+			mSharkCount++;
+			Debug.Log ("shark list count  " + m_Sharks.Count + "Shar count" + mSharkCount);
 		}
+			
 		/*Set the gun position */
 		Vector3 startpos = ArcoreCamera.transform.position;
-		startpos.y--;
+		startpos.y = startpos.y - 0.4f;
 		gun.transform.SetPositionAndRotation (startpos, ArcoreCamera.transform.rotation);
+
+		/*Set the water position , to avoid running out of water*/
+		float distance = Vector3.Distance (ArcoreCamera.transform.position, water.transform.position);
+		if (distance > 20) {
+			startpos = ArcoreCamera.transform.position;
+			startpos.y = water.transform.position.y;
+			water.transform.position = startpos;
+			Debug.Log ("Main: water position changes to " + startpos);
+
+		}
 
 		/* If triggered , Fire Spear*/
 		if (fire) {
 			try {
 				var x = Instantiate (kuntham, startpos, ArcoreCamera.transform.rotation);
 				x.tag="dynamic"; /* only dymanic spears get destroyed*/
+				gun.GetComponent<Animation>().Play("Reload");
 			}
 			catch (System.Exception e)
 			{
-				Debug.Log ("Main Kuntham failed " + e);
+				Debug.Log ("Main: Kuntham creation failed " + e);
 			}
 			fire = false;
 		}
+		/* TODO: needs to avoid camera going under the water */
 		Debug.Log ("shark count  " + m_Sharks.Count);
-
-		//if (m_Sharks.Count < NUM_SHARKS ) {
-		//}
-
-	
 	}
 
 	void OnGUI() {
@@ -85,6 +94,4 @@ public class main : MonoBehaviour {
 		}
 		GUILayout.EndVertical();
 	}
-
-
 }
