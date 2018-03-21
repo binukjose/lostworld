@@ -21,10 +21,11 @@ public class sharkMove : MonoBehaviour {
 	private float distance;
 	private int my_wound_count = 0;
 
-	private int test_move_count = 0;
-	enum SharkState {Idle=1,Move,Attack,JumpStart,Jump,JumpSplash,Dead};  
+	//private int test_move_count = 0;
+	enum SharkState {Idle=1,Move,Attack,JumpStart,Jump,JumpSplash,Dead,Pause};  
 	SharkState mSharkState = SharkState.Move;
- 
+	SharkState mSharkPrevState = SharkState.Move;
+
 	float getSharkTargetX(){
 		return Random.Range
 		(ArcoreCamera.transform.position.x - shark_swim_radius_x, 
@@ -35,6 +36,25 @@ public class sharkMove : MonoBehaviour {
 		return Random.Range (
 			ArcoreCamera.transform.position.z - shark_swim_radius_z, 
 			ArcoreCamera.transform.position.z + shark_swim_radius_z);
+	}
+
+	void SpearHit(Vector3 pos) {
+		Debug.Log ("SpearHit inside shark  :" + pos);
+		var hit_fish_wound = Instantiate (Hit_wound, pos,Quaternion.identity);
+		hit_fish_wound.transform.SetParent (transform);
+		my_wound_count ++;
+		 
+	}
+	void GlobalMessage (string message) {
+		Debug.Log ("GlobalMessage :" + message);
+		if (message == "pause") {
+			mSharkPrevState = mSharkState;
+			mSharkState = SharkState.Pause;
+		} else if (message == "play") {
+			if (mSharkState == SharkState.Pause) {
+				mSharkState = mSharkPrevState;
+			}
+		} 
 	}
 
 	Vector3 getSharkTarget(){
@@ -55,11 +75,14 @@ public class sharkMove : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 
-		Debug.Log ("Move : mSharkState " +  mSharkState + " test_move_count" + test_move_count);
-		test_move_count++;
-		if (mSharkState == SharkState.Move) {
+		Debug.Log ("Move : mSharkState " + mSharkState + " for " + tag);//+ " test_move_count" + test_move_count);
+		//test_move_count++;
+	    if (mSharkState == SharkState.Pause) {
+			//Dont move .
+		}
+		else if (mSharkState == SharkState.Move) {
 			distance = Vector3.Distance (mSharkTarget, transform.position);
-			if (distance <= 2f ) {
+			if (distance <= 5f ) {
 				mSharkTarget = getSharkTarget();
 			}	
 			else if (shark_swim_radius_z - Mathf.Abs (transform.position.z) < 0){
@@ -71,7 +94,12 @@ public class sharkMove : MonoBehaviour {
 			Vector3 relativePos = mSharkTarget - transform.position;
 			transform.rotation = Quaternion.Slerp (transform.rotation, Quaternion.LookRotation (relativePos), Time.deltaTime * angularVelocity);
 			transform.Translate (Vector3.forward * Time.deltaTime * MobCurrentSpeed);
+			if (my_wound_count > 0) {
+				mSharkState = SharkState.Attack;
+			}
 		} else if (mSharkState == SharkState.Attack) {
+
+		
 			mSharkTarget = new Vector3 (ArcoreCamera.transform.position.x,
 				waterSurfaceHeight,
 				ArcoreCamera.transform.position.z);
@@ -79,7 +107,11 @@ public class sharkMove : MonoBehaviour {
 			distance = Vector3.Distance (mSharkTarget, transform.position);
 			transform.rotation = Quaternion.Slerp (transform.rotation, Quaternion.LookRotation (relativePos), Time.deltaTime * angularVelocity);
 			// shark translate in forward direction.
-			transform.Translate (Vector3.forward * Time.deltaTime * MobCurrentSpeed * 5);
+			transform.Translate (Vector3.forward * Time.deltaTime * MobCurrentSpeed * 2);
+
+			//Debug 
+			mSharkState = SharkState.JumpStart;
+			//end debug 
 
 			if (distance <= 3f) {
 				mSharkState = SharkState.Jump;
@@ -101,64 +133,5 @@ public class sharkMove : MonoBehaviour {
 			transform.Translate (Vector3.forward * Time.deltaTime * MobCurrentSpeed * (distance / 2));
 			mSharkState = SharkState.Move;
 		}
-	}
-
-
-	void OnCollisionEnter (Collision col)
-	{
-		Debug.Log (" CollisionEnter Parent Tag   "  + col.transform.transform.tag);
-		try {
-			//Destroy(col.gameObject);
-			if(col.gameObject.tag == "dynamic")
-			{	//col.gameObject.GetComponent<AudioSource> ().Play ();
-				var hit_fish_wound = Instantiate (Hit_wound, col.transform.position,Quaternion.identity);
-				Vector3 hit_point = col.contacts[0].point;
-				for (int i = 0 ; i< col.contacts.Length;  i++) {
-					Debug.Log (" Collision Enter hit  "  +  col.contacts[i].point);
-				}
-
-				Debug.Log (" OnCollisionEnter Parent Tag   "  + this.gameObject.transform.tag);
-				//assign wound to fish 
-				//Vector3 pos_diff = hit_fish_wound.transform.position - col.gameObject.transform.position;
-				//Quaternion rot_diff =Quaternion.FromToRotation (col.gameObject.transform.position,hit_fish_wound.transform.position);
-				hit_fish_wound.transform.SetParent(this.gameObject.transform); 
-				//hit_fish_wound.transform.localPosition=pos_diff;
-				//hit_fish_wound.transform.localRotation=rot_diff;
-
-				//assign spear to fish
-				//pos_diff = transform.position - col.gameObject.transform.position;
-				//rot_diff =Quaternion.FromToRotation (col.gameObject.transform.position,transform.position);
-				col.gameObject.transform.SetParent(this.gameObject.transform); 
-
-				//transform.localPosition=pos_diff;
-				//transform.localRotation=rot_diff;  
-
-				//move_count = 0;
-				//hit_fish_surface = true;
-
-				my_wound_count ++;
-				mSharkState = SharkState.Attack;
-				//too much wound die 
-				if(my_wound_count >5 ) {
-					mSharkState = SharkState.Dead;
-					Destroy(gameObject,3);
-				}
-
-
-			}
-			else if( col.gameObject ){
-				Debug.Log (" OnCollisionEnter "  +  col.gameObject.tag );
-			}
-			else {
-				Debug.Log (" OnCollisionEnter No Audio to play " );
-			}
-
-		}
-		catch (System.Exception e)
-		{
-			Debug.Log ("OnCollisionEnter " + e);
-		}
-
-
 	}
 }

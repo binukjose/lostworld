@@ -6,16 +6,16 @@ public class kuntham : MonoBehaviour {
 
 	//static 
 	private static int  MAX_MOVE = 50;
-
+	private enum State { init, moving, hit, inside,trash };
+	private State mKunthamState = State.init;
 	//public
 
 	public Camera arcamera;
 	public GameObject waterSurface;
-
 	public GameObject Splash;
-
+	public GameObject Wound;
+	public GameObject stuck_spear;
 	//private 
-	public bool kuntham_throwing;
 	private int move_count;
 	private bool hit_water_surface =false;
 	private bool hit_shark_surface =false;
@@ -23,8 +23,8 @@ public class kuntham : MonoBehaviour {
 
 	void Start () {
 		if (tag.Equals ("dynamic")) {
-			kuntham_throwing = true;
-			move_count = MAX_MOVE;	 
+			move_count = MAX_MOVE;	
+			mKunthamState = State.moving;
 			Vector3 startpos = arcamera.transform.position;
 			startpos.y--;
 			transform.SetPositionAndRotation (startpos, arcamera.transform.rotation);
@@ -46,18 +46,14 @@ public class kuntham : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		Debug.Log (" Collision Enter  "  );
-		if (tag.Equals ("dynamic") && !hit_shark_surface ) {
-
-			if (this.transform.parent &&  this.transform.parent.tag.ToString().StartsWith("SharkCube")){
-				transform.Translate (Vector3.forward*0.2f);// IMP:move the arrow a bit more into the shark.
-				Debug.Log (" Collision Kuntham SharkCube HIT "  );
-				hit_shark_surface = true;
-			}
-			else if (kuntham_throwing && move_count > 0  ) {
-				//Debug.Log (" Kuntham kuntham_throwing && move_count > 0"  );
-					transform.Translate (Vector3.forward * (move_count * 2 / MAX_MOVE));//* Time.deltaTime * 2.0f);
+		if (tag.Equals ("dynamic") && mKunthamState != State.inside ) {
 			
+			if ( mKunthamState == State.inside) {
+				  
+				//DO nothing let the kuntham be inside 
+			}
+			else if (mKunthamState == State.moving && move_count > 0  ) {
+				transform.Translate (Vector3.forward * (move_count * 2 / MAX_MOVE));
 				if (transform.transform.position.y < waterSurface.transform.position.y) {
 					if (hit_water_surface == false) { //spalsh sound and splash 
 						GetComponent<AudioSource> ().Play ();
@@ -68,14 +64,66 @@ public class kuntham : MonoBehaviour {
 				}
 				move_count--;
 		 
-			} else if (kuntham_throwing && move_count <= 0 ) { 
-				//Debug.Log (" Kuntham kuntham_throwing && move_count <= 0"  );
-				kuntham_throwing = false;
+			} else if (mKunthamState == State.moving && move_count <= 0 ) { 
+				mKunthamState = State.trash;
 				Destroy (gameObject, 2);
 				Destroy (this);
 			}	
 		}
 	}//end Update 
 
+
+	void OnCollisionEnter (Collision col)
+	{
+		Debug.Log (" CollisionEnter Parent Tag inside Kuntham  " + col.transform.transform.tag + 
+			"movecount" + move_count);
+		//HingeJoint hinge = gameObject.GetComponentInParent(typeof(HingeJoint)) as HingeJoint;
+
+		ContactPoint hitpoint = col.contacts[0];
+		col.transform.SendMessageUpwards ("SpearHit", hitpoint.point);
+
+		if ((col.transform.tag.ToString ().StartsWith ("GWSharkStatic")) ||
+			(col.transform.tag.ToString ().StartsWith ("StingRayStatic"))) {
+			transform.SetParent(transform);//set kuntham as child of shark
+			hit_shark_surface = true;
+			mKunthamState = State.hit;
+
+		}
+
+
+		/*
+		Transform t = col.transform;
+		while (t.parent != null) {
+			Debug.Log ("  CollisionEnter t.parent.tag " + t.parent.tag);
+			if (t.tag.ToString ().StartsWith ("SharkCube")) {
+				transform.SetParent(t.transform);//set kuntham as child of shark
+				var k = Instantiate(stuck_spear,t.transform);
+				k.transform.SetPositionAndRotation (transform.position, transform.rotation);
+				hit_shark_surface = true;
+				mKunthamState = State.hit;
+				Destroy (gameObject);
+				break;
+			}
+			t = t.parent.transform;
+		}
+
+*/
+		/*
+		if (col.transform.transform.tag.ToString().StartsWith("SharkCube")){
+			transform.Translate (Vector3.forward*0.2f);// IMP:move the arrow a bit more into the shark.
+
+
+			
+		 
+			//var hit_fish_wound = Instantiate (Wound, hitpoint.point,Quaternion.identity);
+			//hit_fish_wound.transform.SetParent(col.transform);//set wound as child of shark 
+			//
+
+			col.gameObject.SendMessage ("GlobalMessage","hit");
+
+	
+		}*/
+
+	}
 
 }

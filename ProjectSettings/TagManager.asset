@@ -8,6 +8,9 @@ TagManager:
   - dynamic
   - static
   - SharkCube
+  - Obstacle
+  - StingRayStatic
+  - GWSharkStatic
   layers:
   - Default
   - TransparentFX
