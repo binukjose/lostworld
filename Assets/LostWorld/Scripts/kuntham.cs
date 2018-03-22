@@ -75,21 +75,27 @@ public class kuntham : MonoBehaviour {
 
 	void OnCollisionEnter (Collision col)
 	{
-		Debug.Log (" CollisionEnter Parent Tag inside Kuntham  " + col.transform.transform.tag + 
+		if (mKunthamState != State.hit) { //if kuntham is inside the shark , it will be continues collision 
+			
+			Debug.Log (" CollisionEnter Parent Tag inside Kuntham  " + col.transform.transform.tag +
 			"movecount" + move_count);
-		//HingeJoint hinge = gameObject.GetComponentInParent(typeof(HingeJoint)) as HingeJoint;
+			//HingeJoint hinge = gameObject.GetComponentInParent(typeof(HingeJoint)) as HingeJoint;
 
-		ContactPoint hitpoint = col.contacts[0];
-		col.transform.SendMessageUpwards ("SpearHit", hitpoint.point);
+			ContactPoint hitpoint = col.contacts [0];
+			col.transform.SendMessageUpwards ("SpearHit", hitpoint.point);
 
-		if ((col.transform.tag.ToString ().StartsWith ("GWSharkStatic")) ||
-			(col.transform.tag.ToString ().StartsWith ("StingRayStatic"))) {
-			transform.SetParent(transform);//set kuntham as child of shark
-			hit_shark_surface = true;
-			mKunthamState = State.hit;
-
+			if ((col.transform.tag.ToString ().StartsWith ("GWSharkStatic")) ||
+			   (col.transform.tag.ToString ().StartsWith ("StingRayStatic"))) {
+				transform.SetParent (transform);//set kuntham as child of shark
+				hit_shark_surface = true;
+				mKunthamState = State.hit;
+				//After hit remove collider to avoid further collision 
+				Collider collider = GetComponent <Collider>();
+				DestroyImmediate(collider);
+				Debug.Log (" CollisionEnter  Kuntham  destroied ");
+					
+			}
 		}
-
 
 		/*
 		Transform t = col.transform;

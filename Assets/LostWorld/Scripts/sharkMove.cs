@@ -20,8 +20,9 @@ public class sharkMove : MonoBehaviour {
 
 	private float distance;
 	private int my_wound_count = 0;
+	private int health = 100;
 
-	//private int test_move_count = 0;
+	 
 	enum SharkState {Idle=1,Move,Attack,JumpStart,Jump,JumpSplash,Dead,Pause};  
 	SharkState mSharkState = SharkState.Move;
 	SharkState mSharkPrevState = SharkState.Move;
@@ -43,6 +44,7 @@ public class sharkMove : MonoBehaviour {
 		var hit_fish_wound = Instantiate (Hit_wound, pos,Quaternion.identity);
 		hit_fish_wound.transform.SetParent (transform);
 		my_wound_count ++;
+		health = health - 20;
 		 
 	}
 	void GlobalMessage (string message) {
@@ -69,7 +71,7 @@ public class sharkMove : MonoBehaviour {
 	void Start () {
 		waterSurfaceHeight = waterBody.transform.position.y -1;  
 		mSharkTarget = getSharkTarget ();
-		//m_target = Instantiate (target);
+	
 	}
 	
 	// Update is called once per frame
@@ -82,7 +84,7 @@ public class sharkMove : MonoBehaviour {
 		}
 		else if (mSharkState == SharkState.Move) {
 			distance = Vector3.Distance (mSharkTarget, transform.position);
-			if (distance <= 5f ) {
+			if (distance <= 2f ) {
 				mSharkTarget = getSharkTarget();
 			}	
 			else if (shark_swim_radius_z - Mathf.Abs (transform.position.z) < 0){
@@ -95,7 +97,8 @@ public class sharkMove : MonoBehaviour {
 			transform.rotation = Quaternion.Slerp (transform.rotation, Quaternion.LookRotation (relativePos), Time.deltaTime * angularVelocity);
 			transform.Translate (Vector3.forward * Time.deltaTime * MobCurrentSpeed);
 			if (my_wound_count > 0) {
-				mSharkState = SharkState.Attack;
+				//mSharkState = SharkState.Attack;
+				mSharkState = SharkState.JumpStart;
 			}
 		} else if (mSharkState == SharkState.Attack) {
 
@@ -105,33 +108,36 @@ public class sharkMove : MonoBehaviour {
 				ArcoreCamera.transform.position.z);
 			Vector3 relativePos = mSharkTarget - transform.position;
 			distance = Vector3.Distance (mSharkTarget, transform.position);
-			transform.rotation = Quaternion.Slerp (transform.rotation, Quaternion.LookRotation (relativePos), Time.deltaTime * angularVelocity);
+			transform.rotation = Quaternion.Slerp (transform.rotation, Quaternion.LookRotation (relativePos), Time.deltaTime * angularVelocity*5);
 			// shark translate in forward direction.
 			transform.Translate (Vector3.forward * Time.deltaTime * MobCurrentSpeed * 2);
 
+
 			//Debug 
-			mSharkState = SharkState.JumpStart;
+			//mSharkState = SharkState.JumpStart;
 			//end debug 
 
-			if (distance <= 3f) {
-				mSharkState = SharkState.Jump;
+			if (distance <= 5f) {
+				mSharkState = SharkState.JumpStart;
 			}
 		} else if (mSharkState == SharkState.JumpStart) {
 			mSharkTarget = new Vector3 (ArcoreCamera.transform.position.x,
-				ArcoreCamera.transform.position.y + 1f,
+				ArcoreCamera.transform.position.y + 5f,
 				ArcoreCamera.transform.position.z);
 			distance = Vector3.Distance (mSharkTarget, transform.position);
-			transform.Translate (Vector3.forward * Time.deltaTime * MobCurrentSpeed * (distance / 2));
-			if (distance <= .3f) {
+			transform.Translate (Vector3.forward * Time.deltaTime * MobCurrentSpeed*3 );
+			if ( (transform.position.y > (ArcoreCamera.transform.position.y +1f)) ) {
 				mSharkState = SharkState.Dead;
 			}
 		} else if (mSharkState == SharkState.Dead) {
-			mSharkTarget = new Vector3 (ArcoreCamera.transform.position.x,
-				waterSurfaceHeight-3f,
-				ArcoreCamera.transform.position.z);
-			distance = Vector3.Distance (mSharkTarget, transform.position);
-			transform.Translate (Vector3.forward * Time.deltaTime * MobCurrentSpeed * (distance / 2));
+			mSharkTarget = new Vector3 (10f,
+				waterSurfaceHeight,
+				10f);
+			 
+			transform.Translate (mSharkTarget);
 			mSharkState = SharkState.Move;
+			my_wound_count = 0;
+			health = 100;
 		}
 	}
 }
