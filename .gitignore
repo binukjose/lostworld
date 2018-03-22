@@ -1,0 +1,9 @@
+Library/
+UnityPackageManager/
+commands/
+obj/
+*.apk
+shark.sln
+shark.userprefs
+Assembly*.csproj
+
