@@ -29,14 +29,14 @@ public class sharkMove : MonoBehaviour {
 
 	float getSharkTargetX(){
 		return Random.Range
-		(ArcoreCamera.transform.position.x - shark_swim_radius_x, 
-			ArcoreCamera.transform.position.x + shark_swim_radius_x);
+		(transform.position.x - shark_swim_radius_x, 
+			transform.position.x + shark_swim_radius_x);
 	}
 
 	float getSharkTargetZ(){
 		return Random.Range (
-			ArcoreCamera.transform.position.z - shark_swim_radius_z, 
-			ArcoreCamera.transform.position.z + shark_swim_radius_z);
+			transform.position.z - shark_swim_radius_z, 
+			transform.position.z + shark_swim_radius_z);
 	}
 
 	void SpearHit(Vector3 pos) {
@@ -103,9 +103,9 @@ public class sharkMove : MonoBehaviour {
 		} else if (mSharkState == SharkState.Attack) {
 
 		
-			mSharkTarget = new Vector3 (ArcoreCamera.transform.position.x,
+			mSharkTarget = new Vector3 (transform.position.x,
 				waterSurfaceHeight,
-				ArcoreCamera.transform.position.z);
+				transform.position.z);
 			Vector3 relativePos = mSharkTarget - transform.position;
 			distance = Vector3.Distance (mSharkTarget, transform.position);
 			transform.rotation = Quaternion.Slerp (transform.rotation, Quaternion.LookRotation (relativePos), Time.deltaTime * angularVelocity*5);
@@ -121,12 +121,12 @@ public class sharkMove : MonoBehaviour {
 				mSharkState = SharkState.JumpStart;
 			}
 		} else if (mSharkState == SharkState.JumpStart) {
-			mSharkTarget = new Vector3 (ArcoreCamera.transform.position.x,
-				ArcoreCamera.transform.position.y + 5f,
-				ArcoreCamera.transform.position.z);
+			mSharkTarget = new Vector3 (transform.position.x,
+				transform.position.y + 5f,
+				transform.position.z);
 			distance = Vector3.Distance (mSharkTarget, transform.position);
 			transform.Translate (Vector3.forward * Time.deltaTime * MobCurrentSpeed*3 );
-			if ( (transform.position.y > (ArcoreCamera.transform.position.y +1f)) ) {
+			if ( (transform.position.y > (transform.position.y +1f)) ) {
 				mSharkState = SharkState.Dead;
 			}
 		} else if (mSharkState == SharkState.Dead) {

@@ -11,7 +11,7 @@ public class main : MonoBehaviour {
 	public GameObject gun;
 	public GameObject kuntham;
 	public GameObject water;
-	public GameObject Barrel;
+	//public GameObject Barrel;
 	public int shark_swim_radius_x ;
 	public int shark_swim_radius_z ;
 	public int NUM_SHARKS  ;
@@ -51,12 +51,12 @@ public class main : MonoBehaviour {
 		GameObject ret;
 		Random.InitState(System.DateTime.Now.Millisecond);
 		Vector3 spos= new Vector3(Random.Range
-			(ArcoreCamera.transform.position.x - shark_swim_radius_x , 
-				ArcoreCamera.transform.position.x + shark_swim_radius_x), 
+			(transform.position.x - shark_swim_radius_x , 
+				transform.position.x + shark_swim_radius_x), 
 			waterSurfaceHeight  ,   
 			Random.Range(
-				ArcoreCamera.transform.position.z - shark_swim_radius_z, 
-				ArcoreCamera.transform.position.z + shark_swim_radius_z));
+				transform.position.z - shark_swim_radius_z, 
+				transform.position.z + shark_swim_radius_z));
 	 
 			ret =  Instantiate (Master ,spos,Quaternion.identity) ;
 		return ret;
@@ -75,20 +75,20 @@ public class main : MonoBehaviour {
 
 		Debug.Log ("NUM_SHARKS" +NUM_SHARKS + "shark list count  " + m_Sharks.Count + "Shar count" + mSharkCount);
 		if (mSharkCount < NUM_SHARKS) {
-			AddAShark (SharkGameObj);
+			m_Sharks.Add(AddAShark (SharkGameObj));
 			mSharkCount++;
 			Debug.Log ("shark list count  " + m_Sharks.Count + "Shar count" + mSharkCount);
 		}
 		if (mRayCount < NUM_SHARKS) {
-			AddAShark (StingRayGameObj);
+			m_Rays.Add(AddAShark (StingRayGameObj));
 			mRayCount++;
 			Debug.Log ("Ray list count  " + m_Rays.Count + "Shar count" + mRayCount);
 		}
 
 		/*Set the gun position */
-		Vector3 startpos = ArcoreCamera.transform.position;
+		Vector3 startpos = transform.position;
 		startpos.y = startpos.y-1;
-		gun.transform.SetPositionAndRotation (startpos, ArcoreCamera.transform.rotation);
+		gun.transform.SetPositionAndRotation (startpos, transform.rotation);
 
 		/* Make sure the barrels are floating */
 		//startpos = Barrel.transform.position;
@@ -96,16 +96,16 @@ public class main : MonoBehaviour {
 		//Barrel.transform.position = startpos;
 
 		/*Set the water y-position , to avoid going inside the water this is not working.
-		if ((ArcoreCamera.transform.position.y - water.transform.position.y) < 1) {
+		if ((transform.position.y - water.transform.position.y) < 1) {
 			startpos = water.transform.position;
-			startpos.y = ArcoreCamera.transform.position.y - 1;
+			startpos.y = transform.position.y - 1;
 			water.transform.position = startpos;	
 		}
 		*/
 		/*Set the water position , to avoid running out of water*/
-		float distance = Vector3.Distance (ArcoreCamera.transform.position, water.transform.position);
+		float distance = Vector3.Distance (transform.position, water.transform.position);
 		if (distance > 20) {
-			startpos = ArcoreCamera.transform.position;
+			startpos = transform.position;
 			startpos.y = water.transform.position.y;
 			water.transform.position = startpos;
 			Debug.Log ("Main: water position changes to " + startpos);
@@ -115,8 +115,8 @@ public class main : MonoBehaviour {
 		/* Need to trigger a spear shot if button is pressed */
 		if (fire) {
 			try {
-				startpos = ArcoreCamera.transform.position;
-				var x = Instantiate (kuntham, startpos, ArcoreCamera.transform.rotation);
+				startpos = transform.position;
+				var x = Instantiate (kuntham, startpos, transform.rotation);
 				x.tag="dynamic"; /* only dymanic spears get destroyed*/
 				gun.GetComponent<Animation>().Play("Reload");
 			}

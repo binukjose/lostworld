@@ -14,7 +14,8 @@ public class kuntham : MonoBehaviour {
 	public GameObject waterSurface;
 	public GameObject Splash;
 	public GameObject Wound;
-	public GameObject stuck_spear;
+	//public GameObject stuck_spear;
+	public GameObject Explosive;
 	//private 
 	private int move_count;
 	private bool hit_water_surface =false;
@@ -78,7 +79,7 @@ public class kuntham : MonoBehaviour {
 		if (mKunthamState != State.hit) { //if kuntham is inside the shark , it will be continues collision 
 			
 			Debug.Log (" CollisionEnter Parent Tag inside Kuntham  " + col.transform.transform.tag +
-			"movecount" + move_count);
+			"  movecount" + move_count);
 			//HingeJoint hinge = gameObject.GetComponentInParent(typeof(HingeJoint)) as HingeJoint;
 
 			ContactPoint hitpoint = col.contacts [0];
@@ -94,6 +95,14 @@ public class kuntham : MonoBehaviour {
 				DestroyImmediate(collider);
 				Debug.Log (" CollisionEnter  Kuntham  destroied ");
 					
+			} else if (col.transform.tag.ToString ().StartsWith ("Mine")) {
+				Debug.Log (" CollisionEnter Hit mine  ");
+			
+				var ex = Instantiate (Explosive, col.transform);
+				ex.transform.SetPositionAndRotation (col.contacts [0].point, Quaternion.identity);
+				col.transform.gameObject.tag = "Exploded";
+				Destroy (gameObject);
+				Debug.Log (" CollisionEnter Mine Destroyed    ");
 			}
 		}
 

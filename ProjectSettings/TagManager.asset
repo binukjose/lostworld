@@ -11,6 +11,10 @@ TagManager:
   - Obstacle
   - StingRayStatic
   - GWSharkStatic
+  - CanDestroy
+  - Robot
+  - Mine
+  - Exploded
   layers:
   - Default
   - TransparentFX
