@@ -18,13 +18,37 @@ public class main : MonoBehaviour {
 
 	//private 
 	private List <GameObject> m_Sharks =new List<GameObject>();
+	private List <GameObject> m_Rays =new List<GameObject>();
 	private int mSharkCount;
+	private int mRayCount;
 	private bool fire = false;
 	private bool gamePause = false;
 	private float waterSurfaceHeight;
 
-	void AddAShark()
+	void PlayPause()
+	{
+		string step = "play";
+		if(gamePause) {
+			step = "play";
+			gamePause = false;
+		} else {
+			step = "pause";
+			gamePause = true;
+		}
+		for ( int i=0; i< m_Sharks.Count; i++) {
+			m_Sharks[i].SendMessage("GlobalMessage", step);
+		} 
+		for ( int i=0; i< m_Rays.Count; i++) {
+			m_Rays[i].SendMessage("GlobalMessage", step);
+		}
+		SharkGameObj.SendMessage("GlobalMessage", step);
+		StingRayGameObj.SendMessage("GlobalMessage", step);
+
+	}
+
+	GameObject AddAShark(GameObject Master)
 	{ 
+		GameObject ret;
 		Random.InitState(System.DateTime.Now.Millisecond);
 		Vector3 spos= new Vector3(Random.Range
 			(ArcoreCamera.transform.position.x - shark_swim_radius_x , 
@@ -33,13 +57,9 @@ public class main : MonoBehaviour {
 			Random.Range(
 				ArcoreCamera.transform.position.z - shark_swim_radius_z, 
 				ArcoreCamera.transform.position.z + shark_swim_radius_z));
-		try {
-
-			m_Sharks.Add(Instantiate (SharkGameObj ,spos,Quaternion.identity));
-		}
-		catch (System.Exception ex) {
-			Debug.Log (" Target exception " + ex.ToString());
-		} 
+	 
+			ret =  Instantiate (Master ,spos,Quaternion.identity) ;
+		return ret;
 	}
 
 	void Start () {
@@ -51,13 +71,20 @@ public class main : MonoBehaviour {
 	
 
 	void Update () {
+
+
 		Debug.Log ("NUM_SHARKS" +NUM_SHARKS + "shark list count  " + m_Sharks.Count + "Shar count" + mSharkCount);
 		if (mSharkCount < NUM_SHARKS) {
-			AddAShark ();
+			AddAShark (SharkGameObj);
 			mSharkCount++;
 			Debug.Log ("shark list count  " + m_Sharks.Count + "Shar count" + mSharkCount);
 		}
-			
+		if (mRayCount < NUM_SHARKS) {
+			AddAShark (StingRayGameObj);
+			mRayCount++;
+			Debug.Log ("Ray list count  " + m_Rays.Count + "Shar count" + mRayCount);
+		}
+
 		/*Set the gun position */
 		Vector3 startpos = ArcoreCamera.transform.position;
 		startpos.y = startpos.y-1;
@@ -108,21 +135,7 @@ public class main : MonoBehaviour {
 		GUILayout.BeginArea (gui);
 		GUILayout.BeginHorizontal ();
 		if (GUILayout.Button ("Pause", GUILayout.Height (150))) { //, 
-			if(gamePause) {
-				gamePause = false;
-				for ( int i=0; i< m_Sharks.Count; i++) {
-					m_Sharks[i].SendMessage("GlobalMessage", "play");
-				}
-				SharkGameObj.SendMessage("GlobalMessage", "play");
-				StingRayGameObj.SendMessage("GlobalMessage", "play");
-			} else {
-				for ( int i=0; i< m_Sharks.Count; i++) {
-					m_Sharks[i].SendMessage("GlobalMessage", "pause");
-				}
-				SharkGameObj.SendMessage("GlobalMessage", "pause");
-				StingRayGameObj.SendMessage("GlobalMessage", "pause");
-				gamePause = true;
-			}
+			PlayPause();
 		}
 		if (GUILayout.Button ("FIRE" ,GUILayout.Height (150))) {
 			fire = true;

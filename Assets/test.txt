@@ -1,2 +1,0 @@
-macha test push is successfull
-test push
