@@ -5,5 +5,5 @@ obj/
 *.apk
 shark.sln
 shark.userprefs
-Assembly*.csproj
-
+*.csproj
+*.sln
