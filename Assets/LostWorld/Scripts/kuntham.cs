@@ -98,7 +98,7 @@ public class kuntham : MonoBehaviour {
 			} else if (col.transform.tag.ToString ().StartsWith ("Mine")) {
 				Debug.Log (" CollisionEnter Hit mine  ");
 			
-				var ex = Instantiate (Explosive, col.transform);
+				var ex = Instantiate (Explosive);
 				ex.transform.SetPositionAndRotation (col.contacts [0].point, Quaternion.identity);
 				col.transform.gameObject.tag = "Exploded";
 				Destroy (gameObject);

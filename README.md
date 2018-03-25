@@ -6,7 +6,7 @@ Due to global warming the sea-level has risen and most of the land is under wate
 Some usefull commands
 ==================
 adb tcpip 5555
-adb connect 192.168.1.7:5555
+adb connect 192.168.1.4:5555
 
 adb install -r shark.apk
 adb shell monkey -p com.fish.shark 1
