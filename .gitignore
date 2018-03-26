@@ -7,3 +7,4 @@ shark.userprefs
 *.csproj
 *.sln
 Temp/
+.DS_Store
