@@ -26,7 +26,7 @@ GameObject:
   - component: {fileID: 82033436593897174}
   m_Layer: 0
   m_Name: Barrel
-  m_TagString: Mine
+  m_TagString: Barell
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

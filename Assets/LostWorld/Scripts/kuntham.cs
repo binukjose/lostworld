@@ -98,12 +98,18 @@ public class kuntham : MonoBehaviour {
 			} else if (col.transform.tag.ToString ().StartsWith ("Mine")) {
 				Debug.Log (" CollisionEnter Hit mine  ");
 			
-				var ex = Instantiate (Explosive);
-				ex.transform.SetPositionAndRotation (col.contacts [0].point, Quaternion.identity);
 				col.transform.gameObject.tag = "Exploded";
 				Destroy (gameObject);
 				Debug.Log (" CollisionEnter Mine Destroyed    ");
+			}else if (col.transform.tag.ToString ().StartsWith ("Barell")) {
+				Debug.Log (" CollisionEnter Hit Barell  ");
+
+				col.transform.gameObject.tag = "Hit";
+				Destroy (gameObject);
+				Debug.Log (" CollisionEnter Barell Hit , kuntham destroyed     ");
 			}
+
+
 		}
 
 		/*
