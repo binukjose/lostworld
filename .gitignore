@@ -1,7 +1,6 @@
 Library/
 commands/
 obj/
-*.apk
 shark.sln
 shark.userprefs
 *.csproj
