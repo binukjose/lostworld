@@ -40,7 +40,7 @@ public class oilBarrel : MonoBehaviour {
 	void Update () {
 		Debug.Log (" CollisionEnter mBarell is now    " + mBarell.tag + "  Child " +mBarell.transform.GetChild(0).tag );
 		if (mBarell.transform.GetChild(0).tag == "Hit") {
-			Debug.Log (" CollisionEnter mBarell is now  Hit, going to Explode  " + );
+			Debug.Log (" CollisionEnter mBarell is now  Hit, going to Explode  "  );
 			GameObject explode = Instantiate (BarellExplode);
 			explode.transform.SetPositionAndRotation (mBarell.transform.position, mBarell.transform.rotation);
 			mBarell.transform.SetPositionAndRotation (getBarellPos (), Quaternion.identity);
