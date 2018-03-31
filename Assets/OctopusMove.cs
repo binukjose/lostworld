@@ -11,6 +11,7 @@ public class OctopusMove : MonoBehaviour {
 	public Vector3 moctopusTarget;
 	public int octopus_swim_radius_x ;
 	public int octopus_swim_radius_z ;
+	public int octopus_idleCount = 100 ;
 	public GameObject Hit_wound;
 	public  float MobCurrentSpeed = 2f;
 	public  float angularVelocity = .01f;
@@ -21,10 +22,11 @@ public class OctopusMove : MonoBehaviour {
 	private float distance;
 	private int my_wound_count = 0;
 	private int health = 100;
+	private int idleCount = 10;
 
 
 	enum octopusState {Idle=1,Move,Attack,JumpStart,Jump,JumpSplash,Dead,Pause};  
-	octopusState moctopusState = octopusState.Move;
+	octopusState mOctopusState = octopusState.Move;
 	octopusState moctopusPrevState = octopusState.Move;
 
 	float getoctopusTargetX(){
@@ -50,11 +52,11 @@ public class OctopusMove : MonoBehaviour {
 	void GlobalMessage (string message) {
 		Debug.Log ("GlobalMessage :" + message);
 		if (message == "pause") {
-			moctopusPrevState = moctopusState;
-			moctopusState = octopusState.Pause;
+			moctopusPrevState = mOctopusState;
+			mOctopusState = octopusState.Pause;
 		} else if (message == "play") {
-			if (moctopusState == octopusState.Pause) {
-				moctopusState = moctopusPrevState;
+			if (mOctopusState == octopusState.Pause) {
+				mOctopusState = moctopusPrevState;
 			}
 		} 
 	}
@@ -71,38 +73,45 @@ public class OctopusMove : MonoBehaviour {
 	void Start () {
 		waterSurfaceHeight = waterBody.transform.position.y;  
 		moctopusTarget = getoctopusTarget ();
+		mOctopusState = octopusState.Move;
+		idleCount = octopus_idleCount;
 
 	}
 
 	// Update is called once per frame
 	void Update () {
 
-		Debug.Log ("Move : moctopusState " + moctopusState + " for " + tag);//+ " test_move_count" + test_move_count);
+		Debug.Log ("Move : mOctopusState " + mOctopusState + " for " + tag);//+ " test_move_count" + test_move_count);
 		//test_move_count++;
-		if (moctopusState == octopusState.Pause) {
+		if (mOctopusState == octopusState.Pause) {
 			//Dont move .
+		} else if (mOctopusState == octopusState.Idle) {
+			idleCount--;
+			if (idleCount <= 0 ) {
+				moctopusTarget = getoctopusTarget();
+				mOctopusState = octopusState.Move;
+			}
 		}
-		else if (moctopusState == octopusState.Move) {
+		else if (mOctopusState == octopusState.Move) {
 
 			distance = Vector3.Distance (moctopusTarget, transform.position);
-			if (distance <= 5f  ) {
-				moctopusTarget = getoctopusTarget();
-			}	
-		/*	else if (octopus_swim_radius_z - Mathf.Abs (transform.position.z) < 0){
-				moctopusTarget.z = getoctopusTargetZ ();
+			if (distance <= 1f) {
+				idleCount = octopus_idleCount;
+				mOctopusState = octopusState.Idle;
+			} else if (distance > octopus_swim_radius_x) {
+				moctopusTarget = getoctopusTarget ();
+				Hit_wound.transform.SetPositionAndRotation (moctopusTarget, Quaternion.identity);
 			}
-			else if (octopus_swim_radius_x - Mathf.Abs (transform.position.x) < 0){
-				moctopusTarget.x = getoctopusTargetX ();
-			}
-			*/
+
 			Vector3 relativePos = moctopusTarget - transform.position;
 			transform.rotation = Quaternion.Slerp (transform.rotation, Quaternion.LookRotation (relativePos), Time.deltaTime * angularVelocity);
 			transform.Translate (Vector3.forward * Time.deltaTime * MobCurrentSpeed);
 			if (my_wound_count > 0) {
-				//moctopusState = octopusState.Attack;
-				moctopusState = octopusState.JumpStart;
+				//mOctopusState = octopusState.Attack;
+				mOctopusState = octopusState.JumpStart;
+				MobCurrentSpeed = 25;
 			}
-		} else if (moctopusState == octopusState.Attack) {
+		} else if (mOctopusState == octopusState.Attack) {
 
 
 			moctopusTarget = new Vector3 (transform.position.x,
@@ -116,28 +125,28 @@ public class OctopusMove : MonoBehaviour {
 
 
 			//Debug 
-			//moctopusState = octopusState.JumpStart;
+			//mOctopusState = octopusState.JumpStart;
 			//end debug 
 
 			if (distance <= 5f) {
-				moctopusState = octopusState.JumpStart;
+				mOctopusState = octopusState.JumpStart;
 			}
-		} else if (moctopusState == octopusState.JumpStart) {
+		} else if (mOctopusState == octopusState.JumpStart) {
 			moctopusTarget = new Vector3 (transform.position.x,
 				transform.position.y + 5f,
 				transform.position.z);
 			distance = Vector3.Distance (moctopusTarget, transform.position);
 			transform.Translate (Vector3.forward * Time.deltaTime * MobCurrentSpeed*3 );
 			if ( (transform.position.y > (transform.position.y +1f)) ) {
-				moctopusState = octopusState.Dead;
+				mOctopusState = octopusState.Dead;
 			}
-		} else if (moctopusState == octopusState.Dead) {
+		} else if (mOctopusState == octopusState.Dead) {
 			moctopusTarget = new Vector3 (10f,
 				waterSurfaceHeight,
 				10f);
 
 			transform.Translate (moctopusTarget);
-			moctopusState = octopusState.Move;
+			mOctopusState = octopusState.Move;
 			my_wound_count = 0;
 			health = 100;
 		}

@@ -87,7 +87,8 @@ public class main : MonoBehaviour {
 
 		/*Set the gun position */
 		Vector3 startpos = transform.position;
-		startpos.y = startpos.y-1;
+		startpos.y = startpos.y-0.5f;
+
 		gun.transform.SetPositionAndRotation (startpos, transform.rotation);
 
 		/* Make sure the barrels are floating */
@@ -115,10 +116,10 @@ public class main : MonoBehaviour {
 		/* Need to trigger a spear shot if button is pressed */
 		if (fire) {
 			try {
-				startpos = transform.position;
+				startpos = kuntham.transform.position;
 				var x = Instantiate (kuntham, startpos, transform.rotation);
 				x.tag="dynamic"; /* only dymanic spears get destroyed*/
-				gun.GetComponent<Animation>().Play("Reload");
+				gun.GetComponent<Animation>().Play();
 			}
 			catch (System.Exception e)
 			{

@@ -29,14 +29,14 @@ public class sharkMove : MonoBehaviour {
 
 	float getSharkTargetX(){
 		return Random.Range
-		(transform.position.x - shark_swim_radius_x, 
-			transform.position.x + shark_swim_radius_x);
+			(ArcoreCamera.transform.position.x - shark_swim_radius_x, 
+				ArcoreCamera.transform.position.x + shark_swim_radius_x);
 	}
 
 	float getSharkTargetZ(){
 		return Random.Range (
-			transform.position.z - shark_swim_radius_z, 
-			transform.position.z + shark_swim_radius_z);
+			ArcoreCamera.transform.position.z - shark_swim_radius_z, 
+			ArcoreCamera.transform.position.z + shark_swim_radius_z);
 	}
 
 	void SpearHit(Vector3 pos) {
@@ -84,15 +84,19 @@ public class sharkMove : MonoBehaviour {
 		}
 		else if (mSharkState == SharkState.Move) {
 			distance = Vector3.Distance (mSharkTarget, transform.position);
+
+
 			if (distance <= 2f ) {
 				mSharkTarget = getSharkTarget();
-			}	
+			}
+			/*
 			else if (shark_swim_radius_z - Mathf.Abs (transform.position.z) < 0){
 				mSharkTarget.z = getSharkTargetZ ();
 			}
 			else if (shark_swim_radius_x - Mathf.Abs (transform.position.x) < 0){
 				mSharkTarget.x = getSharkTargetX ();
 			}
+			*/
 			Vector3 relativePos = mSharkTarget - transform.position;
 			transform.rotation = Quaternion.Slerp (transform.rotation, Quaternion.LookRotation (relativePos), Time.deltaTime * angularVelocity);
 			transform.Translate (Vector3.forward * Time.deltaTime * MobCurrentSpeed);

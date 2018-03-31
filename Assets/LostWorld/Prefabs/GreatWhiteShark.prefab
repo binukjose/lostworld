@@ -839,10 +839,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ArcoreCamera: {fileID: 0}
   waterBody: {fileID: 0}
+  target: {fileID: 0}
   mSharkTarget: {x: 0, y: 0, z: 0}
   shark_swim_radius_x: 20
   shark_swim_radius_z: 20
   Hit_wound: {fileID: 1213374605858526, guid: 262d5a8d9a7d249729996c42e2456167, type: 2}
+  MobCurrentSpeed: 10
+  angularVelocity: 5
 --- !u!137 &137244228063793500
 SkinnedMeshRenderer:
   m_ObjectHideFlags: 1

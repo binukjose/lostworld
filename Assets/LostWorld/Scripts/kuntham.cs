@@ -27,7 +27,7 @@ public class kuntham : MonoBehaviour {
 			move_count = MAX_MOVE;	
 			mKunthamState = State.moving;
 			Vector3 startpos = arcamera.transform.position;
-			startpos.y--;
+			startpos.y = startpos.y-0.5f;
 			transform.SetPositionAndRotation (startpos, arcamera.transform.rotation);
 
 		}
