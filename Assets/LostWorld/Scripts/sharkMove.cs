@@ -125,12 +125,12 @@ public class sharkMove : MonoBehaviour {
 				mSharkState = SharkState.JumpStart;
 			}
 		} else if (mSharkState == SharkState.JumpStart) {
-			mSharkTarget = new Vector3 (transform.position.x,
-				transform.position.y + 5f,
-				transform.position.z);
+			mSharkTarget = new Vector3 (ArcoreCamera.transform.position.x,
+				ArcoreCamera.transform.position.y + 1f,
+				ArcoreCamera.transform.position.z);
 			distance = Vector3.Distance (mSharkTarget, transform.position);
 			transform.Translate (Vector3.forward * Time.deltaTime * MobCurrentSpeed*3 );
-			if ( (transform.position.y > (transform.position.y +1f)) ) {
+			if (distance <= 1f) {
 				mSharkState = SharkState.Dead;
 			}
 		} else if (mSharkState == SharkState.Dead) {

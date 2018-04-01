@@ -17,6 +17,8 @@ TagManager:
   - Exploded
   - Barell
   - Hit
+  - Octopus_static
+  - HammerHead_static
   layers:
   - Default
   - TransparentFX
