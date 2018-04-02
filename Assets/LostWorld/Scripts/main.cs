@@ -7,6 +7,8 @@ public class main : MonoBehaviour {
 	//public variables
 	public GameObject SharkGameObj; 
 	public GameObject StingRayGameObj; 
+	public GameObject HammerHeadGameObj;
+	public GameObject OctopusGameObj;
 	public Camera ArcoreCamera;
 	public GameObject gun;
 	public GameObject kuntham;
@@ -17,10 +19,16 @@ public class main : MonoBehaviour {
 	public int NUM_SHARKS  ;
 
 	//private 
-	private List <GameObject> m_Sharks =new List<GameObject>();
-	private List <GameObject> m_Rays =new List<GameObject>();
+	private List <GameObject> mSharks =new List<GameObject>();
+	private List <GameObject> mRays =new List<GameObject>();
+	private List <GameObject> mOctopuses =new List<GameObject>();
+	private List <GameObject> mHammerHeads =new List<GameObject>();
+
 	private int mSharkCount;
 	private int mRayCount;
+	private int mHammerHeadCount;
+	private int mOctopusCount;
+
 	private bool fire = false;
 	private bool gamePause = false;
 	private float waterSurfaceHeight;
@@ -35,14 +43,22 @@ public class main : MonoBehaviour {
 			step = "pause";
 			gamePause = true;
 		}
-		for ( int i=0; i< m_Sharks.Count; i++) {
-			m_Sharks[i].SendMessage("GlobalMessage", step);
+		for ( int i=0; i< mSharks.Count; i++) {
+			mSharks[i].SendMessage("GlobalMessage", step);
 		} 
-		for ( int i=0; i< m_Rays.Count; i++) {
-			m_Rays[i].SendMessage("GlobalMessage", step);
+		for ( int i=0; i< mRays.Count; i++) {
+			mRays[i].SendMessage("GlobalMessage", step);
+		}
+		for ( int i=0; i< mOctopuses.Count; i++) {
+			mOctopuses[i].SendMessage("GlobalMessage", step);
+		}
+		for ( int i=0; i< mHammerHeads.Count; i++) {
+			mHammerHeads[i].SendMessage("GlobalMessage", step);
 		}
 		SharkGameObj.SendMessage("GlobalMessage", step);
 		StingRayGameObj.SendMessage("GlobalMessage", step);
+		HammerHeadGameObj.SendMessage("GlobalMessage", step);
+		OctopusGameObj.SendMessage("GlobalMessage", step);
 
 	}
 
@@ -73,21 +89,35 @@ public class main : MonoBehaviour {
 	void Update () {
 
 
-		Debug.Log ("NUM_SHARKS" +NUM_SHARKS + "shark list count  " + m_Sharks.Count + "Shar count" + mSharkCount);
+		Debug.Log ("NUM_SHARKS" +NUM_SHARKS + "shark list count  " + mSharks.Count + "Shar count" + mSharkCount);
 		if (mSharkCount < NUM_SHARKS) {
-			m_Sharks.Add(AddAShark (SharkGameObj));
+			mSharks.Add(AddAShark (SharkGameObj));
 			mSharkCount++;
-			Debug.Log ("shark list count  " + m_Sharks.Count + "Shar count" + mSharkCount);
+			Debug.Log ("shark list count  " + mSharks.Count + "Shar count" + mSharkCount);
 		}
 		if (mRayCount < NUM_SHARKS) {
-			m_Rays.Add(AddAShark (StingRayGameObj));
+			mRays.Add(AddAShark (StingRayGameObj));
 			mRayCount++;
-			Debug.Log ("Ray list count  " + m_Rays.Count + "Shar count" + mRayCount);
+			Debug.Log ("Ray list count  " + mRays.Count + "Shar count" + mRayCount);
 		}
+
+		if ( mHammerHeadCount < NUM_SHARKS) {
+			mHammerHeads.Add(AddAShark (HammerHeadGameObj));
+			mHammerHeadCount++;
+			 
+		}
+		if ( mOctopusCount < NUM_SHARKS) {
+			mOctopuses.Add(AddAShark (OctopusGameObj));
+			mOctopusCount++;
+
+		}
+
+
 
 		/*Set the gun position */
 		Vector3 startpos = transform.position;
 		startpos.y = startpos.y-0.5f;
+		startpos.z = startpos.z + 1;
 
 		gun.transform.SetPositionAndRotation (startpos, transform.rotation);
 
@@ -128,7 +158,7 @@ public class main : MonoBehaviour {
 			fire = false;
 		}
 		/* TODO: needs to avoid camera going under the water */
-		Debug.Log ("shark count  " + m_Sharks.Count);
+		Debug.Log ("shark count  " + mSharks.Count);
 	}
 
 	void OnGUI() {

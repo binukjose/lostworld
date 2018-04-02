@@ -39,7 +39,7 @@ public class HammerHeadMove : MonoBehaviour {
 		}
 
 		void SpearHit(Vector3 pos) {
-			Debug.Log ("SpearHit inside shark  :" + pos);
+			Debug.Log ("SpearHit inside HammerHead  :" + pos);
 			var hit_fish_wound = Instantiate (Hit_wound, pos,Quaternion.identity);
 			hit_fish_wound.transform.SetParent (transform);
 			my_wound_count ++;
@@ -68,7 +68,7 @@ public class HammerHeadMove : MonoBehaviour {
 		}
 
 		void Start () {
-			waterSurfaceHeight = waterBody.transform.position.y -1;  
+			waterSurfaceHeight = waterBody.transform.position.y -1 ;   
 			mSharkTarget = getSharkTarget ();
 
 		}
@@ -121,12 +121,12 @@ public class HammerHeadMove : MonoBehaviour {
 					mSharkState = SharkState.JumpStart;
 				}
 			} else if (mSharkState == SharkState.JumpStart) {
-				mSharkTarget = new Vector3 (transform.position.x,
-					transform.position.y + 5f,
-					transform.position.z);
+			mSharkTarget = new Vector3 (ArcoreCamera.transform.position.x,
+				ArcoreCamera.transform.position.y + 1f,
+				ArcoreCamera.transform.position.z);
 				distance = Vector3.Distance (mSharkTarget, transform.position);
-				transform.Translate (Vector3.forward * Time.deltaTime * MobCurrentSpeed*3 );
-				if ( (transform.position.y > (transform.position.y +1f)) ) {
+				transform.Translate (Vector3.forward * Time.deltaTime * MobCurrentSpeed*5 );
+			if ( distance < 1f  ) {
 					mSharkState = SharkState.Dead;
 				}
 			} else if (mSharkState == SharkState.Dead) {

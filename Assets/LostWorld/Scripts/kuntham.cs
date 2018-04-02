@@ -17,14 +17,14 @@ public class kuntham : MonoBehaviour {
 	//public GameObject stuck_spear;
 	public GameObject Explosive;
 	//private 
-	private int move_count;
+	private int kunthamMoveCount;
 	private bool hit_water_surface =false;
 	private bool hit_shark_surface =false;
 	 
 
 	void Start () {
 		if (tag.Equals ("dynamic")) {
-			move_count = MAX_MOVE;	
+			kunthamMoveCount = MAX_MOVE;	
 			mKunthamState = State.moving;
 			Vector3 startpos = arcamera.transform.position;
 			startpos.y = startpos.y-0.5f;
@@ -53,8 +53,8 @@ public class kuntham : MonoBehaviour {
 				  
 				//DO nothing let the kuntham be inside 
 			}
-			else if (mKunthamState == State.moving && move_count > 0  ) {
-				transform.Translate (Vector3.forward * (move_count * 2 / MAX_MOVE));
+			else if (mKunthamState == State.moving && kunthamMoveCount > 0  ) {
+				transform.Translate (Vector3.forward * (kunthamMoveCount * 2 / MAX_MOVE));
 				if (transform.transform.position.y < waterSurface.transform.position.y) {
 					if (hit_water_surface == false) { //spalsh sound and splash 
 						GetComponent<AudioSource> ().Play ();
@@ -63,9 +63,9 @@ public class kuntham : MonoBehaviour {
 						Destroy(splash,2);
 					}
 				}
-				move_count--;
+				kunthamMoveCount--;
 		 
-			} else if (mKunthamState == State.moving && move_count <= 0 ) { 
+			} else if (mKunthamState == State.moving && kunthamMoveCount <= 0 ) { 
 				mKunthamState = State.trash;
 				Destroy (gameObject, 2);
 				Destroy (this);
@@ -78,36 +78,40 @@ public class kuntham : MonoBehaviour {
 	{
 		if (mKunthamState != State.hit) { //if kuntham is inside the shark , it will be continues collision 
 			
-			Debug.Log (" CollisionEnter Parent Tag inside Kuntham  " + col.transform.transform.tag +
-			"  movecount" + move_count);
+			Debug.Log (" CollisionEnter Tag: " + col.transform.tag + " parent: " + col.transform.transform.tag +
+			"movecount" + kunthamMoveCount);
 			//HingeJoint hinge = gameObject.GetComponentInParent(typeof(HingeJoint)) as HingeJoint;
 
 			ContactPoint hitpoint = col.contacts [0];
 			col.transform.SendMessageUpwards ("SpearHit", hitpoint.point);
 
 			if ((col.transform.tag.ToString ().StartsWith ("GWSharkStatic")) ||
-			   (col.transform.tag.ToString ().StartsWith ("StingRayStatic"))) {
+			    (col.transform.tag.ToString ().StartsWith ("HammerHead")) ||
+			    (col.transform.tag.ToString ().StartsWith ("Octopus")) ||
+			    (col.transform.tag.ToString ().StartsWith ("StingRayStatic"))) {
 				transform.SetParent (transform);//set kuntham as child of shark
 				hit_shark_surface = true;
 				mKunthamState = State.hit;
 				//After hit remove collider to avoid further collision 
-				Collider collider = GetComponent <Collider>();
-				DestroyImmediate(collider);
-				Debug.Log (" CollisionEnter  Kuntham  destroied ");
+				Collider collider = GetComponent <Collider> ();
+				DestroyImmediate (collider);
+				Rigidbody rb = GetComponent<Rigidbody> ();
+				Destroy (rb);
+			
 					
 			} else if (col.transform.tag.ToString ().StartsWith ("Mine")) {
-				Debug.Log (" CollisionEnter Hit mine  ");
+				//Debug.Log (" CollisionEnter Hit mine  ");
 			
 				col.transform.gameObject.tag = "Exploded";
 				Destroy (gameObject);
-				Debug.Log (" CollisionEnter Mine Destroyed    ");
-			}else if (col.transform.tag.ToString ().StartsWith ("Barell")) {
-				Debug.Log (" CollisionEnter Hit Barell  ");
+				//Debug.Log (" CollisionEnter Mine Destroyed    ");
+			} else if (col.transform.tag.ToString ().StartsWith ("Barell")) {
+				//Debug.Log (" CollisionEnter Hit Barell  ");
 
 				col.transform.gameObject.tag = "Hit";
 				Destroy (gameObject);
-				Debug.Log (" CollisionEnter Barell Hit , kuntham destroyed     ");
-			}
+				//Debug.Log (" CollisionEnter Barell Hit , kuntham destroyed     ");
+			} 
 
 
 		}
