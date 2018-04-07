@@ -1,0 +1,17 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 2108210716, guid: 89f0137620f6af44b9ba852b4190e64e, type: 3}
+  m_Name: Text style Gradient
+  m_EditorClassIdentifier: 
+  topLeft: {r: 0.5242214, g: 0.772, b: 0.74264705, a: 1}
+  topRight: {r: 0.014381501, g: 0.5636948, b: 0.97794116, a: 1}
+  bottomLeft: {r: 0.035142712, g: 0.641, b: 0.9558824, a: 1}
+  bottomRight: {r: 0, g: 0.8758622, b: 1, a: 1}
