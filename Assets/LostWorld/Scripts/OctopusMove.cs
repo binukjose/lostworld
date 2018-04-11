@@ -22,8 +22,12 @@ public class OctopusMove : MonoBehaviour {
 	private float distance;
 	private int my_wound_count = 0;
 	private int health = 100;
-	private int idleCount = 10;
-
+	private int idleCount = 120;
+	private int growCount = 0;
+	private int growCountMax = 10;
+	 
+	private int deadCount = 0;
+	private int deadCountMax = 10;
 
 	enum octopusState {Idle=1,Move,Attack,JumpStart,Jump,JumpSplash,Dead,Pause};  
 	octopusState mOctopusState = octopusState.Move;
@@ -117,6 +121,7 @@ public class OctopusMove : MonoBehaviour {
 			}
 		
 		} else if (mOctopusState == octopusState.Attack) {
+			
 			Vector3 scaling = new Vector3 (0.5F, 0.5f, 0.5f);
 			transform.localScale += scaling;
 
@@ -125,15 +130,12 @@ public class OctopusMove : MonoBehaviour {
 
 			}
 
-			/*moctopusTarget = new Vector3 (transform.position.x,
-				transform.position.y + 5f,
-				transform.position.z);
-			distance = Vector3.Distance (moctopusTarget, transform.position);
-			transform.Translate (Vector3.forward * Time.deltaTime * MobCurrentSpeed * 3);
-			if ((transform.position.y > (transform.position.y + 1f))) {
-				mOctopusState = octopusState.Dead;
+			growCount++;
+			if (growCount > growCountMax) {
+				mOctopusState = octopusState.JumpStart;
+				growCount = 0;
 			}
-			*/
+
 
 		} else if ( mOctopusState == octopusState.JumpStart) {
 
@@ -149,9 +151,6 @@ public class OctopusMove : MonoBehaviour {
 			transform.Translate (Vector3.forward * Time.deltaTime * MobCurrentSpeed );
 
 
-			//Debug 
-			//mOctopusState = octopusState.JumpStart;
-			//end debug 
 
 			if (distance <= 1f) {
 				mOctopusState = octopusState.Dead;
@@ -160,14 +159,17 @@ public class OctopusMove : MonoBehaviour {
 
 
 		else if (mOctopusState == octopusState.Dead) {
-			moctopusTarget = new Vector3 (10f,
-				waterSurfaceHeight,
-				10f);
+			deadCount++; 
+			if (deadCount > deadCountMax) {
+				moctopusTarget = new Vector3 (10f,
+					waterSurfaceHeight,
+					10f);
 
-			transform.Translate (moctopusTarget);
-			mOctopusState = octopusState.Move;
-			my_wound_count = 0;
-			health = 100;
+				transform.Translate (moctopusTarget);
+				mOctopusState = octopusState.Move;
+				my_wound_count = 0;
+				health = 100;
+			}
 		}
 	}
 }

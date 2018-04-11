@@ -115,11 +115,11 @@ public class main : MonoBehaviour {
 
 
 		/*Set the gun position */
-		Vector3 startpos = transform.position;
-		startpos.y = startpos.y-0.5f;
-		startpos.z = startpos.z + 1;
+		//Vector3 gunpos = transform.position;
+		//gunpos.y = gunpos.y-0.5f;
+		//gunpos.z = gunpos.z + 1;
 
-		gun.transform.SetPositionAndRotation (startpos, transform.rotation);
+		//gun.transform.SetPositionAndRotation (gunpos, transform.rotation);
 
 		/* Make sure the barrels are floating */
 		//startpos = Barrel.transform.position;
@@ -134,6 +134,7 @@ public class main : MonoBehaviour {
 		}
 		*/
 		/*Set the water position , to avoid running out of water*/
+		Vector3 startpos = transform.position;
 		float distance = Vector3.Distance (transform.position, water.transform.position);
 		if (distance > 20) {
 			startpos = transform.position;
@@ -146,8 +147,9 @@ public class main : MonoBehaviour {
 		/* Need to trigger a spear shot if button is pressed */
 		if (fire) {
 			try {
-				startpos = kuntham.transform.position;
-				var x = Instantiate (kuntham, startpos, transform.rotation);
+				
+				Vector3 kunthamPos = kuntham.transform.position;
+				var x = Instantiate (kuntham, kunthamPos, transform.rotation);
 				x.tag="dynamic"; /* only dymanic spears get destroyed*/
 				gun.GetComponent<Animation>().Play();
 			}

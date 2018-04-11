@@ -380,7 +380,7 @@ MonoBehaviour:
   octopus_idleCount: 300
   Hit_wound: {fileID: 1988635441572902, guid: 39b2d089bae41424995f10f842e5bdf8, type: 2}
   MobCurrentSpeed: 20
-  angularVelocity: 2
+  angularVelocity: 20
 --- !u!136 &368924173
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -1511,7 +1511,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1435001326}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 5}
+  m_LocalPosition: {x: 0, y: -4.5, z: 5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 101655590}

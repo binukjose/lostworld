@@ -8,7 +8,7 @@ public class StingRayMove : MonoBehaviour {
 
 		//public 
 		public GameObject ArcoreCamera;
-		public GameObject waterBody;
+		public GameObject waterBody; 
 
 		public Vector3 mSharkTarget;
 		public int shark_swim_radius_x ;
@@ -24,6 +24,8 @@ public class StingRayMove : MonoBehaviour {
 		private int my_wound_count = 0;
 		private int health = 100;
 
+		private int deadCount = 0;
+		private int deadCountMax = 10;
 
 		enum SharkState {Idle=1,Move,Attack,JumpStart,Jump,JumpSplash,Dead,Pause};  
 		SharkState mSharkState = SharkState.Move;
@@ -115,20 +117,15 @@ public class StingRayMove : MonoBehaviour {
 				// shark translate in forward direction.
 				transform.Translate (Vector3.forward * Time.deltaTime * MobCurrentSpeed * 2);
 
-
-				//Debug 
-				//mSharkState = SharkState.JumpStart;
-				//end debug 
-
 				if (distance <= 5f) {
 					mSharkState = SharkState.JumpStart;
 				}
 			} else if (mSharkState == SharkState.JumpStart) {
-			mSharkTarget = new Vector3 (ArcoreCamera.transform.position.x,
+			    mSharkTarget = new Vector3 (ArcoreCamera.transform.position.x,
 				ArcoreCamera.transform.position.y +1f,
 				ArcoreCamera.transform.position.z);
 				distance = Vector3.Distance (mSharkTarget, transform.position);
-			Vector3 relativePos = mSharkTarget - transform.position;
+			    Vector3 relativePos = mSharkTarget - transform.position;
 			    transform.rotation = Quaternion.Slerp (transform.rotation, Quaternion.LookRotation (relativePos), Time.deltaTime * angularVelocity*50);
 				transform.Translate (Vector3.forward * Time.deltaTime * MobCurrentSpeed*10 );
 				
@@ -136,6 +133,9 @@ public class StingRayMove : MonoBehaviour {
 					mSharkState = SharkState.Dead;
 				}
 			} else if (mSharkState == SharkState.Dead) {
+
+			deadCount++; 
+			if (deadCount > deadCountMax) {
 				mSharkTarget = new Vector3 (10f,
 					waterSurfaceHeight,
 					10f);
@@ -144,6 +144,7 @@ public class StingRayMove : MonoBehaviour {
 				mSharkState = SharkState.Move;
 				my_wound_count = 0;
 				health = 100;
+			}
 			}
 		}
 	}

@@ -102,7 +102,7 @@ public class HammerHeadMove : MonoBehaviour {
 				}
 			} else if (mSharkState == SharkState.Attack) {
 
-
+			 
 				mSharkTarget = new Vector3 (transform.position.x,
 					waterSurfaceHeight,
 					transform.position.z);

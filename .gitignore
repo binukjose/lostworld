@@ -6,4 +6,5 @@ shark.userprefs
 *.csproj
 *.sln
 Temp/
+Assets/Plugins/
 .DS_Store
