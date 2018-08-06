@@ -1,7 +1,5 @@
 fileFormatVersion: 2
 guid: 2a9d8639212a1d44a91337bc47f4a20e
-timeCreated: 1520946618
-licenseType: Free
 ModelImporter:
   serializedVersion: 22
   fileIDToRecycleName:
@@ -51,6 +49,7 @@ ModelImporter:
     7400000: Take 001
     9500000: //RootNode
     13700000: pPlane1
+    2186277476908879412: ImportLogs
   externalObjects:
   - first:
       type: UnityEngine:Material
@@ -75,6 +74,7 @@ ModelImporter:
     animationRetargetingWarnings: 
     animationDoRetargetingWarnings: 0
     importAnimatedCustomProperties: 0
+    importConstraints: 0
     animationCompression: 1
     animationRotationError: 0.5
     animationPositionError: 0.5

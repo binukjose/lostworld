@@ -6,8 +6,9 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 0
-    path: Assets/HelloAR.unity
+    path: Assets/LostWorld/Scenes/HelloAR.unity
     guid: e6a6fa04348cb45c9b0221eb19c946da
   - enabled: 1
     path: Assets/LostWorld/Scenes/LostWorldScene1.unity
     guid: 2872c1ee204384b1d932770e76df9b81
+  m_configObjects: {}

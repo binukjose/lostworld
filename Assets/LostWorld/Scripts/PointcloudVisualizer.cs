@@ -17,12 +17,10 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-namespace GoogleARCore.HelloAR
+namespace GoogleARCore.Examples.Common
 {
-    using System.Collections.Generic;
     using GoogleARCore;
     using UnityEngine;
-    using UnityEngine.Profiling;
 
     /// <summary>
     /// Visualize the point cloud.
@@ -66,8 +64,8 @@ namespace GoogleARCore.HelloAR
                 }
 
                 m_Mesh.Clear();
-               //BINU  m_Mesh.vertices = m_Points;
-               //BINU  m_Mesh.SetIndices(indices, MeshTopology.Points, 0);
+                m_Mesh.vertices = m_Points;
+                m_Mesh.SetIndices(indices, MeshTopology.Points, 0);
             }
         }
     }

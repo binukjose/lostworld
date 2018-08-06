@@ -11,3 +11,7 @@ adb connect 192.168.1.4:5555
 adb install -r shark.apk
 adb shell monkey -p com.fish.shark 1
 
+
+
+git status 
+git add -u 

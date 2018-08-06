@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------
-// <copyright file="TrackedPlaneVisualizer.cs" company="Google">
+// <copyright file="DetectedPlaneVisualizer.cs" company="Google">
 //
 // Copyright 2017 Google Inc. All Rights Reserved.
 //
@@ -18,16 +18,16 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-namespace GoogleARCore.HelloAR
+namespace GoogleARCore.Examples.Common
 {
     using System.Collections.Generic;
     using GoogleARCore;
     using UnityEngine;
 
     /// <summary>
-    /// Visualizes a TrackedPlane in the Unity scene.
+    /// Visualizes a single DetectedPlane in the Unity scene.
     /// </summary>
-    public class TrackedPlaneVisualizer : MonoBehaviour
+    public class DetectedPlaneVisualizer : MonoBehaviour
     {
         private static int s_PlaneCount = 0;
 
@@ -50,7 +50,7 @@ namespace GoogleARCore.HelloAR
             new Color(1.0f, 0.756f, 0.027f)
         };
 
-        private TrackedPlane m_TrackedPlane;
+        private DetectedPlane m_DetectedPlane;
 
         // Keep previous frame's mesh polygon to avoid mesh update every frame.
         private List<Vector3> m_PreviousFrameMeshVertices = new List<Vector3>();
@@ -79,16 +79,16 @@ namespace GoogleARCore.HelloAR
         /// </summary>
         public void Update()
         {
-            if (m_TrackedPlane == null)
+            if (m_DetectedPlane == null)
             {
                 return;
             }
-            else if (m_TrackedPlane.SubsumedBy != null)
+            else if (m_DetectedPlane.SubsumedBy != null)
             {
                 Destroy(gameObject);
                 return;
             }
-            else if (m_TrackedPlane.TrackingState != TrackingState.Tracking)
+            else if (m_DetectedPlane.TrackingState != TrackingState.Tracking)
             {
                  m_MeshRenderer.enabled = false;
                  return;
@@ -100,12 +100,12 @@ namespace GoogleARCore.HelloAR
         }
 
         /// <summary>
-        /// Initializes the TrackedPlaneVisualizer with a TrackedPlane.
+        /// Initializes the DetectedPlaneVisualizer with a DetectedPlane.
         /// </summary>
         /// <param name="plane">The plane to vizualize.</param>
-        public void Initialize(TrackedPlane plane)
+        public void Initialize(DetectedPlane plane)
         {
-            m_TrackedPlane = plane;
+            m_DetectedPlane = plane;
             m_MeshRenderer.material.SetColor("_GridColor", k_PlaneColors[s_PlaneCount++ % k_PlaneColors.Length]);
             m_MeshRenderer.material.SetFloat("_UvRotation", Random.Range(0.0f, 360.0f));
 
@@ -117,7 +117,7 @@ namespace GoogleARCore.HelloAR
         /// </summary>
         private void _UpdateMeshIfNeeded()
         {
-            m_TrackedPlane.GetBoundaryPolygon(m_MeshVertices);
+            m_DetectedPlane.GetBoundaryPolygon(m_MeshVertices);
 
             if (_AreVerticesListsEqual(m_PreviousFrameMeshVertices, m_MeshVertices))
             {
@@ -127,7 +127,11 @@ namespace GoogleARCore.HelloAR
             m_PreviousFrameMeshVertices.Clear();
             m_PreviousFrameMeshVertices.AddRange(m_MeshVertices);
 
-            m_PlaneCenter = m_TrackedPlane.CenterPose.position;
+            m_PlaneCenter = m_DetectedPlane.CenterPose.position;
+
+            Vector3 planeNormal = m_DetectedPlane.CenterPose.rotation * Vector3.up;
+
+            m_MeshRenderer.material.SetVector("_PlaneNormal", planeNormal);
 
             int planePolygonCount = m_MeshVertices.Count;
 

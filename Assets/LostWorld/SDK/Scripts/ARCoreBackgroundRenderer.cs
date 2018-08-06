@@ -30,6 +30,7 @@ namespace GoogleARCore
     /// Renders the device's camera as a background to the attached Unity camera component.
     /// </summary>
     [RequireComponent(typeof(Camera))]
+    [HelpURL("https://developers.google.com/ar/reference/unity/class/GoogleARCore/ARCoreBackgroundRenderer")]
     public class ARCoreBackgroundRenderer : MonoBehaviour
     {
         /// <summary>
@@ -44,6 +45,11 @@ namespace GoogleARCore
 
         private void OnEnable()
         {
+            if (m_BackgroundRenderer == null)
+            {
+                m_BackgroundRenderer = new ARBackgroundRenderer();
+            }
+
             if (BackgroundMaterial == null)
             {
                 Debug.LogError("ArCameraBackground:: No material assigned.");
@@ -51,58 +57,33 @@ namespace GoogleARCore
             }
 
             m_Camera = GetComponent<Camera>();
+            m_BackgroundRenderer.backgroundMaterial = BackgroundMaterial;
+            m_BackgroundRenderer.camera = m_Camera;
+            m_BackgroundRenderer.mode = ARRenderMode.MaterialAsBackground;
         }
 
         private void OnDisable()
         {
             Disable();
         }
-		/*
-		//BINU START
-		public static Texture2D SetGrayscale(Texture2D t)
-		{
-			Texture2D tex_ = new Texture2D(t.width, t.height, TextureFormat.ARGB32, true);
-			Color[] colors = t.GetPixels();
-			for (int i = 0; i < colors.Length; i++)
-				colors[i] = new Color((colors[i].r + colors[i].g + colors[i].b) / 3, (colors[i].r + colors[i].g + colors[i].b) / 3, (colors[i].r + colors[i].g + colors[i].b) / 3);
-
-			tex_.SetPixels(colors);
-			tex_.Apply();
-			return tex_;
-		}
-		*/
-		//backgroundTexture.filterMode 
-		//BINU END
 
         private void Update()
         {
             if (BackgroundMaterial == null)
             {
-                Disable();
                 return;
             }
 
             Texture backgroundTexture = Frame.CameraImage.Texture;
-			/*BINU START
-			//backgroundTexture;
-			Debug.Log ("BINU Render Start ");
-			Texture2D x = (Texture2D)  Frame.CameraImage.Texture;
-			Texture2D y = SetGrayscale (x);
-			Texture backgroundTexture = (Texture)y;
-			Debug.Log ("BINU Render END ");
-			//BINU END */
-
             if (backgroundTexture == null)
             {
-                Disable();
                 return;
             }
-			Debug.Log ("BINU Render Continue ");
 
             const string mainTexVar = "_MainTex";
             const string topLeftRightVar = "_UvTopLeftRight";
             const string bottomLeftRightVar = "_UvBottomLeftRight";
-			  
+
             BackgroundMaterial.SetTexture(mainTexVar, backgroundTexture);
 
             var uvQuad = Frame.CameraImage.DisplayUvCoords;
@@ -110,33 +91,17 @@ namespace GoogleARCore
                 new Vector4(uvQuad.TopLeft.x, uvQuad.TopLeft.y, uvQuad.TopRight.x, uvQuad.TopRight.y));
             BackgroundMaterial.SetVector(bottomLeftRightVar,
                 new Vector4(uvQuad.BottomLeft.x, uvQuad.BottomLeft.y, uvQuad.BottomRight.x, uvQuad.BottomRight.y));
-			//BINU START 
-            //m_Camera.projectionMatrix = Frame.CameraImage.GetCameraProjectionMatrix(
-              //  m_Camera.nearClipPlane, m_Camera.farClipPlane);
 
-			Matrix4x4 p = Frame.CameraImage.GetCameraProjectionMatrix(m_Camera.nearClipPlane, m_Camera.farClipPlane);
-			p.m01 += Mathf.Sin(Time.time * 1.2F) * 0.1F;
-			p.m10 += Mathf.Sin(Time.time * 1.5F) * 0.1F;
-			m_Camera.projectionMatrix = p;
-			//BINU END 
-
-
-            if (m_BackgroundRenderer == null)
-            {
-                m_BackgroundRenderer = new ARBackgroundRenderer();
-                m_BackgroundRenderer.backgroundMaterial = BackgroundMaterial;
-                m_BackgroundRenderer.camera = m_Camera;
-                m_BackgroundRenderer.mode = ARRenderMode.MaterialAsBackground;
-            }
-			//Frame.CameraImage.GetCameraProjectionMatrix(
+            m_Camera.projectionMatrix = Frame.CameraImage.GetCameraProjectionMatrix(
+                m_Camera.nearClipPlane, m_Camera.farClipPlane);
         }
 
         private void Disable()
         {
             if (m_BackgroundRenderer != null)
             {
+                m_BackgroundRenderer.mode = ARRenderMode.StandardBackground;
                 m_BackgroundRenderer.camera = null;
-                m_BackgroundRenderer = null;
             }
         }
     }
